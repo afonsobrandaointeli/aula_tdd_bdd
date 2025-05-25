@@ -1,0 +1,122 @@
+@baseUrl = http://localhost:5238
+@contentType = application/json
+
+### Test Calculator System Availability
+# @name healthCheck
+GET {{baseUrl}}/api/calculator/add/1/1
+
+### ========================================
+### ADDITION TESTS - SUCCESS SCENARIOS
+### ========================================
+
+### Test: Add positive numbers
+# @name addPositive
+GET {{baseUrl}}/api/calculator/add/10/20
+
+### Test: Add negative and positive numbers
+# @name addMixed
+GET {{baseUrl}}/api/calculator/add/-5/15
+
+### Test: Add zero
+# @name addZero
+GET {{baseUrl}}/api/calculator/add/0/100
+
+### Test: Add numbers at limit boundary
+# @name addBoundary
+GET {{baseUrl}}/api/calculator/add/999999/1
+
+### ========================================
+### ADDITION TESTS - ERROR SCENARIOS
+### ========================================
+
+### Test: Add values exceeding individual limit
+# @name addExceedIndividual
+GET {{baseUrl}}/api/calculator/add/1500000/500000
+
+### Test: Add values causing result overflow
+# @name addOverflow
+GET {{baseUrl}}/api/calculator/add/9000000/2000000
+
+### ========================================
+### DIVISION TESTS - SUCCESS SCENARIOS
+### ========================================
+
+### Test: Divide positive numbers
+# @name dividePositive
+GET {{baseUrl}}/api/calculator/divide/10/2
+
+### Test: Divide with decimal result
+# @name divideDecimal
+GET {{baseUrl}}/api/calculator/divide/7/2
+
+### Test: Divide negative number
+# @name divideNegative
+GET {{baseUrl}}/api/calculator/divide/-10/2
+
+### Test: Divide zero by number
+# @name divideZeroByNumber
+GET {{baseUrl}}/api/calculator/divide/0/5
+
+### ========================================
+### DIVISION TESTS - ERROR SCENARIOS
+### ========================================
+
+### Test: Divide by zero
+# @name divideByZero
+GET {{baseUrl}}/api/calculator/divide/10/0
+
+### ========================================
+### SCENARIO OUTLINE EQUIVALENT TESTS
+### ========================================
+
+### Multiple addition tests (simulating Scenario Outline)
+GET {{baseUrl}}/api/calculator/add/10/20
+###
+GET {{baseUrl}}/api/calculator/add/-5/15
+###
+GET {{baseUrl}}/api/calculator/add/0/100
+###
+GET {{baseUrl}}/api/calculator/add/999999/1
+
+### Multiple division tests (simulating Scenario Outline)
+GET {{baseUrl}}/api/calculator/divide/10/2
+###
+GET {{baseUrl}}/api/calculator/divide/15/3
+###
+GET {{baseUrl}}/api/calculator/divide/7/2
+###
+GET {{baseUrl}}/api/calculator/divide/-10/2
+
+### ========================================
+### ADVANCED TESTS WITH VARIABLES
+### ========================================
+
+### Test using response from previous request
+@successResult = {{addPositive.response.body.$.result}}
+# This would be 30 from the addPositive test above
+
+### Test with extracted values (for demonstration)
+# Note: This requires running addPositive first
+GET {{baseUrl}}/api/calculator/add/{{successResult}}/5
+
+### ========================================
+### BATCH TESTING
+### ========================================
+
+### Run all success scenarios in sequence
+GET {{baseUrl}}/api/calculator/add/1/1
+###
+GET {{baseUrl}}/api/calculator/add/5/5
+###
+GET {{baseUrl}}/api/calculator/divide/10/2
+###
+GET {{baseUrl}}/api/calculator/divide/20/4
+
+### ========================================
+### ERROR VALIDATION TESTS
+### ========================================
+
+### Validate error responses have correct structure
+GET {{baseUrl}}/api/calculator/add/2000000/1000000
+###
+GET {{baseUrl}}/api/calculator/divide/100/0
